@@ -37,6 +37,11 @@ def moveRobot(currentPosition, direction, roomDimensions):
         return [x-1, y]
 
 
+def cleanPosition(dirtyToCleaned, currentPosition):
+    return list(
+        filter(lambda item: (str(item[0]) + "-" + str(item[1])) != (str(currentPosition[0]) + "-" + str(currentPosition[1])), dirtyToCleaned))
+
+
 def cleanRoom(instructionData):
     splitData = splitInstructions(instructionData)
     roomDimensions = splitData.roomDimensions
@@ -45,16 +50,15 @@ def cleanRoom(instructionData):
     movements = splitData.movements
 
     dirtyToCleaned = dirtyLocations
-
     currentPosition = startPosition
 
+    dirtyToCleaned = cleanPosition(dirtyToCleaned, currentPosition)
+
     for i in range(0, len(movements)):
-        # print(list(dirtyToCleaned))
         currentPosition = moveRobot(
             currentPosition, movements[i], roomDimensions)
-        dirtyToCleaned = list(
-            filter(lambda item: (str(item[0]) + "-" + str(item[1])) != (str(currentPosition[0]) + "-" + str(currentPosition[1])), dirtyToCleaned))
-        # print(list(dirtyToCleaned))
+
+        dirtyToCleaned = cleanPosition(dirtyToCleaned, currentPosition)
 
     cleanedCount = len(list(dirtyLocations)) - len(list(dirtyToCleaned))
 
@@ -69,5 +73,5 @@ f = open("index.txt", "r")
 if f.mode == 'r':
     instructions = f.read()
     output = cleanRoom(instructions)
-    print(output.finishLocation)
+    print(str(output.finishLocation[0]) + " " + str(output.finishLocation[1]))
     print(output.count)
